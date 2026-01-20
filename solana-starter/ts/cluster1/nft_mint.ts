@@ -1,4 +1,4 @@
-// https://explorer.solana.com/tx/2H9nZ1qSyaNgk31SN83LG3ArUrH5JiKfAT9RW4t8L4WzUJdHhJYRQt23s5CLB8fHfdb185GsqhHTs95TAwnn8rcn?cluster=devnet
+// NFT - https://solscan.io/token/yXFBTrii1DRJnRsyUNm7x5U2sHcjn5FbZDU5SGTzaPw?cluster=devnet
 // Mint Address:  yXFBTrii1DRJnRsyUNm7x5U2sHcjn5FbZDU5SGTzaPw
 
 import {
