@@ -1,4 +1,11 @@
-import { createAssociatedTokenAccountIdempotent, getOrCreateAssociatedTokenAccount, mintTo, transferChecked } from "@solana/spl-token";
+// Tx Id : 2u4i86g1tBxdRfSS8gHPk9CMtChnFhZuZhUH78nJ9dYdiALyUZLRCi2zAhkxiZuD6FodSCnYmrWEije66gVMySpW
+
+import {
+  createAssociatedTokenAccountIdempotent,
+  getOrCreateAssociatedTokenAccount,
+  mintTo,
+  transferChecked,
+} from "@solana/spl-token";
 import { Commitment, Connection, Keypair, PublicKey } from "@solana/web3.js";
 import wallet from "../turbin3-wallet.json";
 
@@ -18,42 +25,59 @@ const to = new PublicKey("EsBpCmULkvQrEgU6SjYkVdWUDR1avGAqjyHDyUbAbgix");
 const TOKEN_DECIMAL = 1_000_000_000;
 
 (async () => {
-    try {
-        // Get the token account of the fromWallet address, and if it does not exist, create it
-        let fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-            connection,
-            keypair,
-            mint,
-            keypair.publicKey,
-        );
+  try {
+    // Get the token account of the fromWallet address, and if it does not exist, create it
+    let fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      keypair,
+      mint,
+      keypair.publicKey,
+    );
 
-        let fromAddress = fromTokenAccount.address;
+    let fromAddress = fromTokenAccount.address;
 
-        if (!fromTokenAccount.isInitialized){
-            fromAddress = await createAssociatedTokenAccountIdempotent(
-                connection,
-                keypair,
-                mint,
-                keypair.publicKey,
-            );
+    if (!fromTokenAccount.isInitialized) {
+      fromAddress = await createAssociatedTokenAccountIdempotent(
+        connection,
+        keypair,
+        mint,
+        keypair.publicKey,
+      );
 
-            await mintTo(connection,keypair,mint,fromAddress,keypair,2*TOKEN_DECIMAL);
-        }
-        // Get the token account of the toWallet address, and if it does not exist, create it
-
-        let toTokenAccount = await getOrCreateAssociatedTokenAccount(
-            connection,
-            keypair,
-            mint,
-            to,
-        );
-
-        // Transfer the new token to the "toTokenAccount" we just created
-
-        const tx = await transferChecked(connection,keypair,fromAddress,mint,toTokenAccount.address,keypair,TOKEN_DECIMAL,9);
-
-        console.log("Tx ID: ", tx);
-    } catch(e) {
-        console.error(`Oops, something went wrong: ${e}`)
+      await mintTo(
+        connection,
+        keypair,
+        mint,
+        fromAddress,
+        keypair,
+        2 * TOKEN_DECIMAL,
+      );
     }
+    // Get the token account of the toWallet address, and if it does not exist, create it
+
+    let toTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      keypair,
+      mint,
+      to,
+    );
+
+    // Transfer the new token to the "toTokenAccount" we just created
+
+    const tx = await transferChecked(
+      connection,
+      keypair,
+      fromAddress,
+      mint,
+      toTokenAccount.address,
+      keypair,
+      TOKEN_DECIMAL,
+      9,
+    );
+
+    // 2u4i86g1tBxdRfSS8gHPk9CMtChnFhZuZhUH78nJ9dYdiALyUZLRCi2zAhkxiZuD6FodSCnYmrWEije66gVMySpW
+    console.log("Tx ID: ", tx);
+  } catch (e) {
+    console.error(`Oops, something went wrong: ${e}`);
+  }
 })();

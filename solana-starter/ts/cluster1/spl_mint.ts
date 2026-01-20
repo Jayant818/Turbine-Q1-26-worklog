@@ -1,4 +1,12 @@
-import { createAssociatedTokenAccountIdempotent, mintToChecked } from "@solana/spl-token";
+// Your ata is:  PublicKey [PublicKey(BT4JpsBHZ1wS3yJSNisLWiecybCJgWZ8P2FwxwHXKuwt)] {
+//   _bn: <BN: 9b41b5bcc7529509be926bcac6cb373bdc94f6eaa75287535241ae463125896f>
+// }
+// Your mint txid: 2nLfEFjjL9FsFRR2eZV8nEw3eb38AJvNF3kMKZ1VBTwg5H6i6pEWm9pshevfQtFez5jdJh1bmkyykzh8CtSJ1hRD
+
+import {
+  createAssociatedTokenAccountIdempotent,
+  mintToChecked,
+} from "@solana/spl-token";
 import { Commitment, Connection, Keypair, PublicKey } from "@solana/web3.js";
 import wallet from "../turbin3-wallet.json";
 
@@ -17,7 +25,6 @@ const mint = new PublicKey("9g2q3vjgiGdfVQFuke2a646qcgSgPPfYpmikTV5SgnFs");
 // ATA - BT4JpsBHZ1wS3yJSNisLWiecybCJgWZ8P2FwxwHXKuwt
 (async () => {
   try {
-
     // Create an ATA
     const ata = await createAssociatedTokenAccountIdempotent(
       connection,
