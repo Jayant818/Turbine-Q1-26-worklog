@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.server.path": "/home/jayant/.cargo/bin/rust-analyzer",
+    "rust-analyzer.cargo.extraEnv": {
+        "PATH": "/home/jayant/.cargo/bin:${env:PATH}"
+    },
+    "rust-analyzer.runnables.extraEnv": {
+        "PATH": "/home/jayant/.cargo/bin:${env:PATH}"
+    }
+}
