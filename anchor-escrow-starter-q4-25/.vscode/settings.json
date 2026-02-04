@@ -1,0 +1,13 @@
+{
+    "rust-analyzer.server.path": "/home/jayant/.cargo/bin/rust-analyzer",
+    "rust-analyzer.cargo.extraEnv": {
+        "PATH": "/home/jayant/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}",
+        "CC": "/usr/bin/cc"
+    },
+    "rust-analyzer.runnables.extraEnv": {
+        "PATH": "/home/jayant/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}",
+        "CC": "/usr/bin/cc"
+    },
+    "rust-analyzer.rustc.source": "discover",
+    "rust-analyzer.cargo.sysroot": "discover"
+}
