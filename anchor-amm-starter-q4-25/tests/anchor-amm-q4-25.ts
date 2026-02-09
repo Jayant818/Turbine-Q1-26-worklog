@@ -8,12 +8,18 @@ import {
   mintTo,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey, Connection } from "@solana/web3.js";
 import { expect } from "chai";
 
 const TOKEN_DECIMALS = 6;
 const FEE_BPS = 30; // 0.3%
 const SEED = 12345;
+
+const toTokenAmount = (amount: number) => amount * 10 ** TOKEN_DECIMALS;
+const getBalance = async (connection: any, account: PublicKey) => {
+  const bal = await connection.getTokenAccountBalance(account);
+  return Number(bal.value.amount);
+};
 
 describe("anchor-amm-q4-25", () => {
   const provider = anchor.AnchorProvider.env();
@@ -66,7 +72,7 @@ describe("anchor-amm-q4-25", () => {
       user.publicKey
     );
 
-    const initAmount = 1_000_000 * 10 ** TOKEN_DECIMALS;
+    const initAmount = toTokenAmount(1_500_000);
     await mintTo(connection, user.payer, mintX, userXAta, user.publicKey, initAmount);
     await mintTo(connection, user.payer, mintY, userYAta, user.publicKey, initAmount);
 
@@ -121,10 +127,10 @@ describe("anchor-amm-q4-25", () => {
     );
   });
 
-  it("deposits liquidity", async () => {
-    const depositX = 100_000 * 10 ** TOKEN_DECIMALS;
-    const depositY = 100_000 * 10 ** TOKEN_DECIMALS;
-    const lpAmount = 100_000 * 10 ** TOKEN_DECIMALS;
+  it("deposits liquidity into pool", async () => {
+    const depositX = toTokenAmount(150_000);
+    const depositY = toTokenAmount(150_000);
+    const lpAmount = toTokenAmount(150_000);
 
     const userLpAta = getAssociatedTokenAddressSync(mintLpPda, user.publicKey);
 
@@ -151,17 +157,17 @@ describe("anchor-amm-q4-25", () => {
       })
       .rpc();
 
-    const userLpAccount = await provider.connection.getTokenAccountBalance(userLpAta);
-    expect(Number(userLpAccount.value.amount)).to.equal(lpAmount);
+    const userLpBalance = await getBalance(provider.connection, userLpAta);
+    expect(userLpBalance).to.equal(lpAmount);
   });
 
-  it("swaps token X for token Y", async () => {
-    const amountIn = 10_000 * 10 ** TOKEN_DECIMALS;
+  it("swaps X tokens for Y tokens", async () => {
+    const amountIn = toTokenAmount(15_000);
     const minAmountOut = 0;
 
     const lpTokenAccount = getAssociatedTokenAddressSync(mintLpPda, configPda, true);
 
-    const userYBefore = await provider.connection.getTokenAccountBalance(userYAta);
+    const userYBefore = await getBalance(provider.connection, userYAta);
 
     await program.methods
       .swap(true, new anchor.BN(amountIn), new anchor.BN(minAmountOut))
@@ -182,17 +188,17 @@ describe("anchor-amm-q4-25", () => {
       })
       .rpc();
 
-    const userYAfter = await provider.connection.getTokenAccountBalance(userYAta);
-    expect(Number(userYAfter.value.amount)).to.be.greaterThan(Number(userYBefore.value.amount));
+    const userYAfter = await getBalance(provider.connection, userYAta);
+    expect(userYAfter).to.be.greaterThan(userYBefore);
   });
 
-  it("swaps token Y for token X", async () => {
-    const amountIn = 5_000 * 10 ** TOKEN_DECIMALS;
+  it("swaps Y tokens for X tokens", async () => {
+    const amountIn = toTokenAmount(8_000);
     const minAmountOut = 0;
 
     const lpTokenAccount = getAssociatedTokenAddressSync(mintLpPda, configPda, true);
 
-    const userXBefore = await provider.connection.getTokenAccountBalance(userXAta);
+    const userXBefore = await getBalance(provider.connection, userXAta);
 
     await program.methods
       .swap(false, new anchor.BN(amountIn), new anchor.BN(minAmountOut))
@@ -213,8 +219,8 @@ describe("anchor-amm-q4-25", () => {
       })
       .rpc();
 
-    const userXAfter = await provider.connection.getTokenAccountBalance(userXAta);
-    expect(Number(userXAfter.value.amount)).to.be.greaterThan(Number(userXBefore.value.amount));
+    const userXAfter = await getBalance(provider.connection, userXAta);
+    expect(userXAfter).to.be.greaterThan(userXBefore);
   });
 
   it("withdraws liquidity", async () => {
